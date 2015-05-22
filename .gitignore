@@ -6,7 +6,5 @@
 
 
 #ignore things that should not be checked in
-.idea/
-*.iml
 out/
-
+/.idea/workspace.xml
