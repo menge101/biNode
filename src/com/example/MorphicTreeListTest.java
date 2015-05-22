@@ -69,4 +69,38 @@ public class MorphicTreeListTest {
         Integer[] actualArray = actual.toArray(new Integer[actual.size()]);
         assertArrayEquals(values, actualArray);
     }
+
+    @Test
+    public void test_AddNodeListMode() {
+        mt = new MorphicTreeList("LIST");
+        mt.add(5);
+        Integer[] expected = new Integer[]{5};
+        ArrayList<Integer> actual = mt.values();
+        Integer[] actualArray = actual.toArray(new Integer[actual.size()]);
+        assertArrayEquals(expected, actualArray);
+    }
+
+    @Test
+    public void test_Add2ndNodeListMode() {
+        mt = new MorphicTreeList();
+        mt.add(5);
+        mt.add(4);
+        Integer[] expected = new Integer[]{4,5};
+        ArrayList<Integer> actual = mt.values();
+        Integer[] actualArray = actual.toArray(new Integer[actual.size()]);
+        assertArrayEquals(expected, actualArray);
+    }
+
+    @Test
+    public void test_AddMoreNodesListMode() {
+        mt = new MorphicTreeList("LIST");
+        Integer[] values = new Integer[]{4,5,2,8,1,9,2,6,7,1,8,3};
+        for(int i: values) {
+            mt.add(i);
+        }
+        Arrays.sort(values);
+        ArrayList<Integer> actual = mt.values();
+        Integer[] actualArray = actual.toArray(new Integer[actual.size()]);
+        assertArrayEquals(values, actualArray);
+    }
 }

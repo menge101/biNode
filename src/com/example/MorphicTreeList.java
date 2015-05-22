@@ -55,6 +55,33 @@ public class MorphicTreeList {
         }
     }
 
+    // In list mode, node1 is the next node and node2 is the previous node
+    private void listInsert(int val) {
+        BiNode currentNode = root;
+        BiNode node2Insert = new BiNode(val);
+
+        //currentNode will be the node that node2Insert should preceed
+        //if the value is greater than or equal
+        //if value is less than it should preceed it
+        while(currentNode.data < val && currentNode.node1 != null) {
+            currentNode = currentNode.node1;
+        }
+
+        if(currentNode.node2 == null && currentNode.data >= node2Insert.data) {
+            root = node2Insert;
+            node2Insert.node1 = currentNode;
+            currentNode.node2 = node2Insert;
+        } else if(currentNode.node1 == null) {
+            currentNode.node1 = node2Insert;
+            node2Insert.node2 = currentNode;
+        } else {
+            node2Insert.node1 = currentNode;
+            node2Insert.node2 = currentNode.node2;
+            currentNode.node2.node1 = node2Insert;
+            currentNode.node2 = node2Insert;
+        }
+    }
+
     private ArrayList<Integer> treeScan(BiNode node) {
         ArrayList<Integer> leftList = new ArrayList<>();
         ArrayList<Integer> rightList = new ArrayList<>();
@@ -72,6 +99,16 @@ public class MorphicTreeList {
         returnList.addAll(leftList);
         returnList.add(node.data);
         returnList.addAll(rightList);
+        return returnList;
+    }
+
+    private ArrayList<Integer> listScan(BiNode node) {
+        ArrayList<Integer> returnList = new ArrayList<>();
+
+        while(node != null) {
+            returnList.add(node.data);
+            node = node.node1;
+        }
         return returnList;
     }
 
@@ -105,11 +142,17 @@ public class MorphicTreeList {
         if(root == null) {
             root = new BiNode(val);
         } else {
-            treeInsert(val);
+            if(isTree()) {
+                treeInsert(val);
+            } else if(isList()) {
+                listInsert(val);
+            }
+
         }
     }
 
     public ArrayList<Integer> values() {
-        return treeScan(root);
+        if(isTree()) { return treeScan(root); }
+        else { return listScan(root); }
     }
 }
