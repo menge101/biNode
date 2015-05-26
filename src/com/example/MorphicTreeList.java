@@ -63,22 +63,22 @@ public class MorphicTreeList {
         //currentNode will be the node that node2Insert should preceed
         //if the value is greater than or equal
         //if value is less than it should preceed it
-        while(currentNode.data < val && currentNode.node1 != null) {
-            currentNode = currentNode.node1;
+        while(currentNode.data < val && currentNode.node2 != null) {
+            currentNode = currentNode.node2;
         }
 
-        if(currentNode.node2 == null && currentNode.data >= node2Insert.data) {
+        if(currentNode.node1 == null && currentNode.data >= node2Insert.data) {
             root = node2Insert;
-            node2Insert.node1 = currentNode;
-            currentNode.node2 = node2Insert;
-        } else if(currentNode.node1 == null) {
-            currentNode.node1 = node2Insert;
             node2Insert.node2 = currentNode;
-        } else {
-            node2Insert.node1 = currentNode;
-            node2Insert.node2 = currentNode.node2;
-            currentNode.node2.node1 = node2Insert;
+            currentNode.node1 = node2Insert;
+        } else if(currentNode.node2 == null) {
             currentNode.node2 = node2Insert;
+            node2Insert.node1 = currentNode;
+        } else {
+            node2Insert.node2 = currentNode;
+            node2Insert.node1 = currentNode.node1;
+            currentNode.node1.node2 = node2Insert;
+            currentNode.node1 = node2Insert;
         }
     }
 
@@ -107,11 +107,41 @@ public class MorphicTreeList {
 
         while(node != null) {
             returnList.add(node.data);
-            node = node.node1;
+            node = node.node2;
         }
         return returnList;
     }
 
+    // These two methods should only be used on linked lists
+    private static BiNode lastNode(BiNode start) {
+        while(start.node2 != null) { start = start.node2; }
+        return start;
+    }
+
+    private static BiNode firstNode(BiNode start) {
+        while(start.node1 != null) { start = start.node1; }
+        return start;
+    }
+
+    public BiNode listMorph(BiNode start) {
+        // handle empty and single node cases
+        if(start == null) { return start; }
+        else if(start.node1 == null && start.node2 == null) { return start; }
+        //lift the leaves up, return the head of the list
+        if(start.node1 != null) {
+            //set tail of returned list as precedeing node
+            BiNode precedingNode = MorphicTreeList.lastNode(listMorph(start.node1));
+            precedingNode.node2 = start;
+            start.node1 = precedingNode;
+        }
+        if(start.node2 != null) {
+            //set head of returned list as following node
+            BiNode followingNode = listMorph(start.node2);
+            followingNode.node1 = start;
+            start.node2 = followingNode;
+        }
+        return MorphicTreeList.firstNode(start);
+    }
 
     public MorphicTreeList() {
         mode = Mode.TREE; // Default to Tree mode
@@ -154,5 +184,18 @@ public class MorphicTreeList {
     public ArrayList<Integer> values() {
         if(isTree()) { return treeScan(root); }
         else { return listScan(root); }
+    }
+
+    public BiNode getRoot() {
+        return root;
+    }
+
+    public void morph() {
+        if(isTree()) {
+            root = listMorph(root);
+            mode = Mode.LIST;
+        } else {
+            //treeMorph();
+        }
     }
 }
