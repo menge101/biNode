@@ -211,4 +211,75 @@ public class MorphicTreeListTest {
         Integer[] actualArray = actual.toArray(new Integer[actual.size()]);
         assertArrayEquals(values, actualArray);
     }
+
+    @Test
+    public void test_emptyListMorph2Tree()  {
+        mt = new MorphicTreeList("LIST");
+        mt.morph();
+        assertEquals(mt.getMode(), "TREE");
+    }
+
+    @Test
+    public void test_singleNodeMorph2Tree() {
+        mt = new MorphicTreeList("LIST");
+        mt.add(5);
+        mt.morph();
+        assertEquals(mt.getMode(), "TREE");
+    }
+
+    @Test
+    public void test_simpleNodeMorph2Tree() {
+        mt = new MorphicTreeList("LIST");
+        mt.add(5);
+        mt.add(2);
+        mt.add(8);
+
+        mt.morph();
+
+        BiNode left, right, root;
+        root = mt.getRoot();
+        left = root.node1;
+        right = root.node2;
+
+        assertNull(left.node1);
+        assertNull(left.node2);
+        assertNull(right.node1);
+        assertNull(right.node2);
+        assertEquals(mt.getMode(), "TREE");
+    }
+
+    @Test
+    public void test_smallerListMorph2Tree() {
+        mt = new MorphicTreeList("LIST");
+        mt.add(5);
+        mt.add(8);
+
+        mt.morph();
+
+        BiNode left, right, root;
+        root = mt.getRoot();
+        left = root.node1;
+        right = root.node2;
+
+        assertNull(left);
+        assertNull(right.node1);
+        assertNull(right.node2);
+        assertEquals(mt.getMode(), "TREE");
+    }
+
+    @Test
+    public void test_complexMorph2Tree() {
+        mt = new MorphicTreeList("LIST");
+        Integer[] values = new Integer[]{4,5,2,8,1,9,2,6,7,1,8,3};
+        for(int i: values) {
+            mt.add(i);
+        }
+
+        mt.morph();
+
+        Arrays.sort(values);
+        ArrayList<Integer> actual = mt.values();
+        Integer[] actualArray = actual.toArray(new Integer[actual.size()]);
+        assertArrayEquals(values, actualArray);
+    } // */
 }

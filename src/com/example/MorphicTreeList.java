@@ -13,6 +13,7 @@ public class MorphicTreeList {
     private Mode mode;
     private BiNode root;
     private Random branchSeed = new Random();
+    private int nodeCount = 0;
 
     private void treeInsert(int val) {
         BiNode nodeToInsert = new BiNode(val);
@@ -112,7 +113,7 @@ public class MorphicTreeList {
         return returnList;
     }
 
-    // These two methods should only be used on linked lists
+    // These three following methods should only be used on linked lists
     private static BiNode lastNode(BiNode start) {
         while(start.node2 != null) { start = start.node2; }
         return start;
@@ -123,7 +124,20 @@ public class MorphicTreeList {
         return start;
     }
 
-    public BiNode listMorph(BiNode start) {
+    private static BiNode listCenter(BiNode start, int listSize) {
+        int centerNode = (listSize + 1) / 2;
+        BiNode currentNode = start;
+        for(int i=1; i < centerNode; i++) {
+            currentNode = currentNode.node2;
+        }
+        return currentNode;
+    }
+
+    private static boolean isOdd(int number) {
+        return (number % 2 != 0);
+    }
+
+    private BiNode listMorph(BiNode start) {
         // handle empty and single node cases
         if(start == null) { return start; }
         else if(start.node1 == null && start.node2 == null) { return start; }
@@ -141,6 +155,45 @@ public class MorphicTreeList {
             start.node2 = followingNode;
         }
         return MorphicTreeList.firstNode(start);
+    }
+
+    private BiNode treeMorph(BiNode start, int listSize) {
+        if(start == null) { return start; }
+        if(start.node1 == null && start.node2 == null) { return start; }
+        if(start.node1 != null) {
+            // TODO replace with exception, maybe
+            start = MorphicTreeList.firstNode(start);
+            System.out.println("THis hsouldn't happen!");
+
+        }
+        // select center node of list
+        BiNode centerNode = MorphicTreeList.listCenter(start, listSize);
+        //break list into components
+        int leftSize;
+        int rightSize = listSize / 2;
+        if(MorphicTreeList.isOdd(listSize)) {
+            leftSize = rightSize;
+        } else {
+            leftSize = rightSize - 1;
+        }
+
+        //drop neighbors, return root of tree
+        BiNode rightOfCenter = centerNode.node2;
+        if(centerNode.node1 != null) {
+            centerNode.node1.node2 = null;
+        }
+        if(centerNode.node2 != null) {
+            centerNode.node2.node1 = null;
+        }
+        centerNode.node1 = null;
+        centerNode.node2 = null;
+        if(leftSize > 0) {
+            centerNode.node1 = treeMorph(start, leftSize);
+        }
+        if(rightSize > 0) {
+            centerNode.node2 = treeMorph(rightOfCenter, rightSize);
+        }
+        return centerNode;
     }
 
     public MorphicTreeList() {
@@ -179,6 +232,7 @@ public class MorphicTreeList {
             }
 
         }
+        nodeCount++;
     }
 
     public ArrayList<Integer> values() {
@@ -195,7 +249,8 @@ public class MorphicTreeList {
             root = listMorph(root);
             mode = Mode.LIST;
         } else {
-            //treeMorph();
+            root = treeMorph(root, nodeCount);
+            mode = Mode.TREE;
         }
     }
 }
