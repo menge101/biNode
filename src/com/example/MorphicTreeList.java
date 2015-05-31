@@ -160,12 +160,6 @@ public class MorphicTreeList {
     private BiNode treeMorph(BiNode start, int listSize) {
         if(start == null) { return start; }
         if(start.node1 == null && start.node2 == null) { return start; }
-        if(start.node1 != null) {
-            // TODO replace with exception, maybe
-            start = MorphicTreeList.firstNode(start);
-            System.out.println("THis hsouldn't happen!");
-
-        }
         // select center node of list
         BiNode centerNode = MorphicTreeList.listCenter(start, listSize);
         //break list into components
