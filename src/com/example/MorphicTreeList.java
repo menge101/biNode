@@ -12,12 +12,71 @@ import java.util.Random;
 public class MorphicTreeList {
     private Mode mode;
     private BiNode root;
-    private Random branchSeed = new Random();
     private int nodeCount = 0;
+
+    public MorphicTreeList() {
+        mode = Mode.TREE; // Default to Tree mode
+    }
+
+    public MorphicTreeList(String mode) {
+        this.mode = Mode.valueOf(mode);
+    }
+
+    public boolean isTree() {
+        return this.getMode().equals("TREE");
+    }
+
+    public boolean isList() {
+        return this.getMode().equals("LIST");
+    }
+
+    public void add(int val) {
+        // create the root if it does not yet exist
+        if(root == null) {
+            root = new BiNode(val);
+        } else {
+            if(isTree()) {
+                treeInsert(val);
+            } else if(isList()) {
+                listInsert(val);
+            }
+
+        }
+        nodeCount++;
+    }
+
+    public ArrayList<Integer> values() {
+        if(isTree()) { return treeScan(root); }
+        else { return listScan(root); }
+    }
+
+    // this method is used by tests
+    public BiNode getRoot() {
+        return root;
+    }
+
+    public void morph() {
+        if(isTree()) {
+            root = listMorph(root);
+            mode = Mode.LIST;
+        } else {
+            root = treeMorph(root, nodeCount);
+            mode = Mode.TREE;
+        }
+    }
+
+    private enum Mode {
+        TREE, LIST
+    }
+
+    private String getMode() {
+        return mode.name();
+    }
 
     private void treeInsert(int val) {
         BiNode nodeToInsert = new BiNode(val);
         BiNode start = root;
+        Random branchSeed = new Random();
 
         while(start != null) {
             if(val < start.data) {
@@ -190,61 +249,5 @@ public class MorphicTreeList {
         return centerNode;
     }
 
-    public MorphicTreeList() {
-        mode = Mode.TREE; // Default to Tree mode
-    }
 
-    public MorphicTreeList(String mode) {
-        this.mode = Mode.valueOf(mode);
-    }
-
-    public enum Mode {
-        TREE, LIST
-    }
-
-    public String getMode() {
-        return mode.name();
-    }
-
-    public boolean isTree() {
-        return this.getMode().equals("TREE");
-    }
-
-    public boolean isList() {
-        return this.getMode().equals("LIST");
-    }
-
-    public void add(int val) {
-        // create the root if it does not yet exist
-        if(root == null) {
-            root = new BiNode(val);
-        } else {
-            if(isTree()) {
-                treeInsert(val);
-            } else if(isList()) {
-                listInsert(val);
-            }
-
-        }
-        nodeCount++;
-    }
-
-    public ArrayList<Integer> values() {
-        if(isTree()) { return treeScan(root); }
-        else { return listScan(root); }
-    }
-
-    public BiNode getRoot() {
-        return root;
-    }
-
-    public void morph() {
-        if(isTree()) {
-            root = listMorph(root);
-            mode = Mode.LIST;
-        } else {
-            root = treeMorph(root, nodeCount);
-            mode = Mode.TREE;
-        }
-    }
 }
